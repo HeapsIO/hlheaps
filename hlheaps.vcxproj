@@ -75,6 +75,7 @@
     <TargetExt>.hdll</TargetExt>
     <IncludePath>$(HASHLINK_SRC)/src;turbojpeg;zlib;png;vorbis;mikktspace;minimp3;meshoptimizer;$(IncludePath)</IncludePath>
     <LibraryPath>turbojpeg/x64;$(HASHLINK_SRC)/$(IntDir);$(LibraryPath)</LibraryPath>
+    <TargetName>heaps</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
@@ -82,6 +83,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(HASHLINK_SRC)/src;turbojpeg;zlib;png;vorbis;mikktspace;minimp3;meshoptimizer;$(IncludePath)</IncludePath>
     <LibraryPath>turbojpeg/x64;$(HASHLINK_SRC)/$(IntDir);$(LibraryPath)</LibraryPath>
+    <TargetName>heaps</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
