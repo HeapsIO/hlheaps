@@ -1,0 +1,497 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="dxt.c" />
+    <ClCompile Include="fmt.c" />
+    <ClCompile Include="meshoptimizer\allocator.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\clusterizer.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\indexcodec.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\indexgenerator.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\overdrawanalyzer.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\overdrawoptimizer.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\quantization.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\simplifier.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\spatialorder.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\stripifier.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\vcacheanalyzer.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\vcacheoptimizer.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\vertexcodec.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\vertexfilter.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\vfetchanalyzer.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer\vfetchoptimizer.cpp">
+      <Filter>meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="mikktspace\mikktspace.c">
+      <Filter>mikkt</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngerror.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngget.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngwutil.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\png.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngmem.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngpread.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngread.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngrio.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngrtran.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngrutil.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngset.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngtrans.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngwio.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngwrite.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="png\pngwtran.c">
+      <Filter>png</Filter>
+    </ClCompile>
+    <ClCompile Include="meshoptimizer.cpp" />
+    <ClCompile Include="mikkt.c" />
+    <ClCompile Include="turbojpeg\jaricom.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcapimin.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcapistd.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcarith.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jccoefct.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jccolor.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcdctmgr.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jchuff.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcinit.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcmainct.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcmarker.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcmaster.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcomapi.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcparam.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcphuff.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcprepct.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jcsample.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jctrans.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdapimin.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdapistd.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdarith.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdatadst.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdatadst-tj.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdatasrc.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdatasrc-tj.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdcoefct.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdcolor.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jddctmgr.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdhuff.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdinput.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdmainct.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdmaster.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdmerge.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdphuff.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdpostct.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdsample.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdtrans.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jerror.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jfdctflt.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jfdctfst.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jfdctint.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jidctflt.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jidctfst.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jidctint.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jidctred.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jmemmgr.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jmemnobs.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jquant1.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jquant2.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jsimd.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jutils.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\transupp.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\turbojpeg.c">
+      <Filter>turbojpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\bitrate.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\bitwise.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\block.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\codebook.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\envelope.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\floor0.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\floor1.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\framing.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\info.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\lookup.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\lpc.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\lsp.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\mapping0.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\mdct.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\psy.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\registry.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\res0.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\sharedbook.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\smallft.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\synthesis.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\vorbisfile.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="vorbis\window.c">
+      <Filter>vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\deflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\trees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\zutil.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="turbojpeg\jdmarker.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="meshoptimizer\meshoptimizer.h">
+      <Filter>meshoptimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="mikktspace\mikktspace.h">
+      <Filter>mikkt</Filter>
+    </ClInclude>
+    <ClInclude Include="minimp3\minimp3.h">
+      <Filter>minimp3</Filter>
+    </ClInclude>
+    <ClInclude Include="png\png.h">
+      <Filter>png</Filter>
+    </ClInclude>
+    <ClInclude Include="png\pngconf.h">
+      <Filter>png</Filter>
+    </ClInclude>
+    <ClInclude Include="png\pngdebug.h">
+      <Filter>png</Filter>
+    </ClInclude>
+    <ClInclude Include="png\pnginfo.h">
+      <Filter>png</Filter>
+    </ClInclude>
+    <ClInclude Include="png\pnglibconf.h">
+      <Filter>png</Filter>
+    </ClInclude>
+    <ClInclude Include="png\pngpriv.h">
+      <Filter>png</Filter>
+    </ClInclude>
+    <ClInclude Include="png\pngstruct.h">
+      <Filter>png</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\backends.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\bitrate.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\codebook.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\codec_internal.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\envelope.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\highlevel.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\lookup.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\lookup_data.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\lpc.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\lsp.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\masking.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\mdct.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\misc.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\os.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\psy.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\registry.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\scales.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\smallft.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vorbis\window.h">
+      <Filter>vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\crc32.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\deflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffast.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffixed.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inftrees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\trees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zconf.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zlib.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zutil.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="meshoptimizer">
+      <UniqueIdentifier>{24885e27-9b7b-4f4f-be7b-bd77f0958d5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mikkt">
+      <UniqueIdentifier>{c5c39519-307a-4023-af64-3b776efcb47d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="minimp3">
+      <UniqueIdentifier>{93f391d3-b349-4230-86c3-28752c73bde5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="png">
+      <UniqueIdentifier>{7f03ae3a-ebcf-43ba-b959-906dbcf55305}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="turbojpeg">
+      <UniqueIdentifier>{54e069b6-b8fa-4e48-be3a-68731690c434}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vorbis">
+      <UniqueIdentifier>{f0627cb8-7dda-4f65-8748-00c23ced0bdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{a6c8ef5e-a0d6-477b-a51a-6298af3f410f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

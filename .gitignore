@@ -1,0 +1,7 @@
+.vs
+*.obj
+*.exe
+*.dll
+*.user
+Debug
+Release

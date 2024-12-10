@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{309fe902-f5db-49ef-b218-4258dea71258}</ProjectGuid>
+    <RootNamespace>hlheaps</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetExt>.hdll</TargetExt>
+    <IncludePath>$(HASHLINK_SRC)/src;turbojpeg;zlib;png;vorbis;mikktspace;minimp3;meshoptimizer;$(IncludePath)</IncludePath>
+    <LibraryPath>turbojpeg/x64;$(HASHLINK_SRC)/$(IntDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetExt>.hdll</TargetExt>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(HASHLINK_SRC)/src;turbojpeg;zlib;png;vorbis;mikktspace;minimp3;meshoptimizer;$(IncludePath)</IncludePath>
+    <LibraryPath>turbojpeg/x64;$(HASHLINK_SRC)/$(IntDir);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/wd4996 </AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>simd.lib;libhl.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;JPG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/wd4996 </AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>simd.lib;libhl.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="dxt.c" />
+    <ClCompile Include="fmt.c" />
+    <ClCompile Include="meshoptimizer.cpp" />
+    <ClCompile Include="meshoptimizer\allocator.cpp" />
+    <ClCompile Include="meshoptimizer\clusterizer.cpp" />
+    <ClCompile Include="meshoptimizer\indexcodec.cpp" />
+    <ClCompile Include="meshoptimizer\indexgenerator.cpp" />
+    <ClCompile Include="meshoptimizer\overdrawanalyzer.cpp" />
+    <ClCompile Include="meshoptimizer\overdrawoptimizer.cpp" />
+    <ClCompile Include="meshoptimizer\quantization.cpp" />
+    <ClCompile Include="meshoptimizer\simplifier.cpp" />
+    <ClCompile Include="meshoptimizer\spatialorder.cpp" />
+    <ClCompile Include="meshoptimizer\stripifier.cpp" />
+    <ClCompile Include="meshoptimizer\vcacheanalyzer.cpp" />
+    <ClCompile Include="meshoptimizer\vcacheoptimizer.cpp" />
+    <ClCompile Include="meshoptimizer\vertexcodec.cpp" />
+    <ClCompile Include="meshoptimizer\vertexfilter.cpp" />
+    <ClCompile Include="meshoptimizer\vfetchanalyzer.cpp" />
+    <ClCompile Include="meshoptimizer\vfetchoptimizer.cpp" />
+    <ClCompile Include="mikkt.c" />
+    <ClCompile Include="mikktspace\mikktspace.c" />
+    <ClCompile Include="png\png.c" />
+    <ClCompile Include="png\pngerror.c" />
+    <ClCompile Include="png\pngget.c" />
+    <ClCompile Include="png\pngmem.c" />
+    <ClCompile Include="png\pngpread.c" />
+    <ClCompile Include="png\pngread.c" />
+    <ClCompile Include="png\pngrio.c" />
+    <ClCompile Include="png\pngrtran.c" />
+    <ClCompile Include="png\pngrutil.c" />
+    <ClCompile Include="png\pngset.c" />
+    <ClCompile Include="png\pngtrans.c" />
+    <ClCompile Include="png\pngwio.c" />
+    <ClCompile Include="png\pngwrite.c" />
+    <ClCompile Include="png\pngwtran.c" />
+    <ClCompile Include="png\pngwutil.c" />
+    <ClCompile Include="turbojpeg\jaricom.c" />
+    <ClCompile Include="turbojpeg\jcapimin.c" />
+    <ClCompile Include="turbojpeg\jcapistd.c" />
+    <ClCompile Include="turbojpeg\jcarith.c" />
+    <ClCompile Include="turbojpeg\jccoefct.c" />
+    <ClCompile Include="turbojpeg\jccolor.c" />
+    <ClCompile Include="turbojpeg\jcdctmgr.c" />
+    <ClCompile Include="turbojpeg\jchuff.c" />
+    <ClCompile Include="turbojpeg\jcinit.c" />
+    <ClCompile Include="turbojpeg\jcmainct.c" />
+    <ClCompile Include="turbojpeg\jcmarker.c" />
+    <ClCompile Include="turbojpeg\jcmaster.c" />
+    <ClCompile Include="turbojpeg\jcomapi.c" />
+    <ClCompile Include="turbojpeg\jcparam.c" />
+    <ClCompile Include="turbojpeg\jcphuff.c" />
+    <ClCompile Include="turbojpeg\jcprepct.c" />
+    <ClCompile Include="turbojpeg\jcsample.c" />
+    <ClCompile Include="turbojpeg\jctrans.c" />
+    <ClCompile Include="turbojpeg\jdapimin.c" />
+    <ClCompile Include="turbojpeg\jdapistd.c" />
+    <ClCompile Include="turbojpeg\jdarith.c" />
+    <ClCompile Include="turbojpeg\jdatadst-tj.c" />
+    <ClCompile Include="turbojpeg\jdatadst.c" />
+    <ClCompile Include="turbojpeg\jdatasrc-tj.c" />
+    <ClCompile Include="turbojpeg\jdatasrc.c" />
+    <ClCompile Include="turbojpeg\jdcoefct.c" />
+    <ClCompile Include="turbojpeg\jdcolor.c" />
+    <ClCompile Include="turbojpeg\jddctmgr.c" />
+    <ClCompile Include="turbojpeg\jdhuff.c" />
+    <ClCompile Include="turbojpeg\jdinput.c" />
+    <ClCompile Include="turbojpeg\jdmainct.c" />
+    <ClCompile Include="turbojpeg\jdmarker.c" />
+    <ClCompile Include="turbojpeg\jdmaster.c" />
+    <ClCompile Include="turbojpeg\jdmerge.c" />
+    <ClCompile Include="turbojpeg\jdphuff.c" />
+    <ClCompile Include="turbojpeg\jdpostct.c" />
+    <ClCompile Include="turbojpeg\jdsample.c" />
+    <ClCompile Include="turbojpeg\jdtrans.c" />
+    <ClCompile Include="turbojpeg\jerror.c" />
+    <ClCompile Include="turbojpeg\jfdctflt.c" />
+    <ClCompile Include="turbojpeg\jfdctfst.c" />
+    <ClCompile Include="turbojpeg\jfdctint.c" />
+    <ClCompile Include="turbojpeg\jidctflt.c" />
+    <ClCompile Include="turbojpeg\jidctfst.c" />
+    <ClCompile Include="turbojpeg\jidctint.c" />
+    <ClCompile Include="turbojpeg\jidctred.c" />
+    <ClCompile Include="turbojpeg\jmemmgr.c" />
+    <ClCompile Include="turbojpeg\jmemnobs.c" />
+    <ClCompile Include="turbojpeg\jquant1.c" />
+    <ClCompile Include="turbojpeg\jquant2.c" />
+    <ClCompile Include="turbojpeg\jsimd.c" />
+    <ClCompile Include="turbojpeg\jutils.c" />
+    <ClCompile Include="turbojpeg\transupp.c" />
+    <ClCompile Include="turbojpeg\turbojpeg.c" />
+    <ClCompile Include="vorbis\bitrate.c" />
+    <ClCompile Include="vorbis\bitwise.c" />
+    <ClCompile Include="vorbis\block.c" />
+    <ClCompile Include="vorbis\codebook.c" />
+    <ClCompile Include="vorbis\envelope.c" />
+    <ClCompile Include="vorbis\floor0.c" />
+    <ClCompile Include="vorbis\floor1.c" />
+    <ClCompile Include="vorbis\framing.c" />
+    <ClCompile Include="vorbis\info.c" />
+    <ClCompile Include="vorbis\lookup.c" />
+    <ClCompile Include="vorbis\lpc.c" />
+    <ClCompile Include="vorbis\lsp.c" />
+    <ClCompile Include="vorbis\mapping0.c" />
+    <ClCompile Include="vorbis\mdct.c" />
+    <ClCompile Include="vorbis\psy.c" />
+    <ClCompile Include="vorbis\registry.c" />
+    <ClCompile Include="vorbis\res0.c" />
+    <ClCompile Include="vorbis\sharedbook.c" />
+    <ClCompile Include="vorbis\smallft.c" />
+    <ClCompile Include="vorbis\synthesis.c" />
+    <ClCompile Include="vorbis\vorbisfile.c" />
+    <ClCompile Include="vorbis\window.c" />
+    <ClCompile Include="zlib\adler32.c" />
+    <ClCompile Include="zlib\crc32.c" />
+    <ClCompile Include="zlib\deflate.c" />
+    <ClCompile Include="zlib\inffast.c" />
+    <ClCompile Include="zlib\inflate.c" />
+    <ClCompile Include="zlib\inftrees.c" />
+    <ClCompile Include="zlib\trees.c" />
+    <ClCompile Include="zlib\zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="meshoptimizer\meshoptimizer.h" />
+    <ClInclude Include="mikktspace\mikktspace.h" />
+    <ClInclude Include="minimp3\minimp3.h" />
+    <ClInclude Include="png\png.h" />
+    <ClInclude Include="png\pngconf.h" />
+    <ClInclude Include="png\pngdebug.h" />
+    <ClInclude Include="png\pnginfo.h" />
+    <ClInclude Include="png\pnglibconf.h" />
+    <ClInclude Include="png\pngpriv.h" />
+    <ClInclude Include="png\pngstruct.h" />
+    <ClInclude Include="vorbis\backends.h" />
+    <ClInclude Include="vorbis\bitrate.h" />
+    <ClInclude Include="vorbis\codebook.h" />
+    <ClInclude Include="vorbis\codec_internal.h" />
+    <ClInclude Include="vorbis\envelope.h" />
+    <ClInclude Include="vorbis\highlevel.h" />
+    <ClInclude Include="vorbis\lookup.h" />
+    <ClInclude Include="vorbis\lookup_data.h" />
+    <ClInclude Include="vorbis\lpc.h" />
+    <ClInclude Include="vorbis\lsp.h" />
+    <ClInclude Include="vorbis\masking.h" />
+    <ClInclude Include="vorbis\mdct.h" />
+    <ClInclude Include="vorbis\misc.h" />
+    <ClInclude Include="vorbis\os.h" />
+    <ClInclude Include="vorbis\psy.h" />
+    <ClInclude Include="vorbis\registry.h" />
+    <ClInclude Include="vorbis\scales.h" />
+    <ClInclude Include="vorbis\smallft.h" />
+    <ClInclude Include="vorbis\window.h" />
+    <ClInclude Include="zlib\crc32.h" />
+    <ClInclude Include="zlib\deflate.h" />
+    <ClInclude Include="zlib\inffast.h" />
+    <ClInclude Include="zlib\inffixed.h" />
+    <ClInclude Include="zlib\inflate.h" />
+    <ClInclude Include="zlib\inftrees.h" />
+    <ClInclude Include="zlib\trees.h" />
+    <ClInclude Include="zlib\zconf.h" />
+    <ClInclude Include="zlib\zlib.h" />
+    <ClInclude Include="zlib\zutil.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
