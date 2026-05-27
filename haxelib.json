@@ -1,0 +1,11 @@
+{
+	"name" : "hlheaps",
+	"url" : "https://github.com/HeapsIO/hlheaps",
+	"license" : "BSD",
+	"description" : "Native bindings for Heaps/HL",
+	"version" : "0.1.0",
+	"releasenote" : "",
+	"classPath": "src/",
+	"contributors" : ["ncannasse"],
+	"dependencies": {}
+}

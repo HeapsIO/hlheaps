@@ -1,4 +1,4 @@
-package h3d.impl;
+package heaps.dlss;
 
 #if (hldx && dx12 && dlss)
 
