@@ -27,14 +27,14 @@ enum DLSSFeature {
 sl::Feature toSlFeature(DLSSFeature feature) {
     sl::Feature featureId = 0;
     switch (feature) {
-    case DLSSFeature::DLSS: {
-        featureId = sl::kFeatureDLSS;
-        break;
-    }
-    case DLSSFeature::FrameGen: {
-        featureId = sl::kFeatureDLSS_G;
-        break;
-    }
+        case DLSSFeature::DLSS: {
+            featureId = sl::kFeatureDLSS;
+            break;
+        }
+        case DLSSFeature::FrameGen: {
+            featureId = sl::kFeatureDLSS_G;
+            break;
+        }
     }
     return featureId;
 }

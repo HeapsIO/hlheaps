@@ -75,7 +75,7 @@ enum abstract DLSSPreset(Int) {
 	public var PRESET_M = 13; // Performance
 }
 
-enum abstract DLSSMode(Int) {
+enum abstract DLSSModeNative(Int) {
 	public var OFF = 0;
 	public var MAXPERFORMANCE = 1;
 	public var BALANCED = 2;
@@ -86,7 +86,7 @@ enum abstract DLSSMode(Int) {
 }
 
 @:struct class DLSSOptions {
-	public var mode : DLSSMode;
+	public var mode : DLSSModeNative;
 	public var outputWidth : Int;
 	public var outputHeight : Int;
 	public var preset : DLSSPreset;
