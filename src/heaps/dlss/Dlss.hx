@@ -91,6 +91,7 @@ enum abstract DLSSModeNative(Int) {
 	public var outputHeight : Int;
 	public var preset : DLSSPreset;
 	public var colorBufferHDR : Bool;
+	public var autoExposure : Bool;
 	public function new() {
 	}
 }

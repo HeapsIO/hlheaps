@@ -82,6 +82,7 @@ struct DLSSOptions {
     uint32_t outputHeight;
     sl::DLSSPreset preset;
     int colorBufferHDR;
+    int autoExposure;
 };
 
 struct DLSSOptimalSettings {
@@ -167,6 +168,7 @@ HL_PRIM int HL_NAME(set_options)(DLSSOptions* options) {
     dlssOptions.outputHeight = options->outputHeight;
     dlssOptions.dlaaPreset = options->preset;
     dlssOptions.colorBuffersHDR = options->colorBufferHDR ? sl::Boolean::eTrue : sl::Boolean::eFalse;
+    dlssOptions.useAutoExposure = options->autoExposure ? sl::Boolean::eTrue : sl::Boolean::eFalse;
 
     sl::Result result = slDLSSSetOptions(sl::ViewportHandle(0), dlssOptions);
 
