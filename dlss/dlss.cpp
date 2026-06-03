@@ -44,7 +44,7 @@ HL_PRIM int HL_NAME(init)(bool showConsole) {
     pref.showConsole = showConsole;
     pref.logLevel = sl::LogLevel::eDefault;
     pref.engine = sl::EngineType::eCustom;
-    pref.applicationId = 231313132;
+    pref.projectId = "5346cce9-f379-43da-b490-74f1194b1e8f";
     pref.engineVersion = "2.1.1";
     sl::Feature featureList[] = { sl::kFeatureDLSS /*, sl::kFeatureDLSS_G*/ };
     pref.featuresToLoad = featureList;
