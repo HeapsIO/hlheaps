@@ -42,7 +42,7 @@ sl::Feature toSlFeature(DLSSFeature feature) {
 HL_PRIM int HL_NAME(init)(bool showConsole) {
     sl::Preferences pref{};
     pref.showConsole = showConsole;
-    pref.logLevel = sl::LogLevel::eDefault;
+    pref.logLevel = sl::LogLevel::eOff;
     pref.engine = sl::EngineType::eCustom;
     pref.projectId = "5346cce9-f379-43da-b490-74f1194b1e8f";
     pref.engineVersion = "2.1.1";
@@ -91,21 +91,20 @@ struct DLSSOptimalSettings {
     double optimalSharpness;
 };
 
-HL_PRIM DLSSOptimalSettings* HL_NAME(get_optimal_settings)(DLSSOptions* options) {
+HL_PRIM int HL_NAME(get_optimal_settings)(DLSSOptions* options, DLSSOptimalSettings* outOptimalSettings) {
     sl::DLSSOptions dlssOptions;
     dlssOptions.mode = options->mode;
     dlssOptions.outputWidth = options->outputWidth;
     dlssOptions.outputHeight = options->outputHeight;
 
     sl::DLSSOptimalSettings optimalSettings;
-    slDLSSGetOptimalSettings(dlssOptions, optimalSettings);
+    sl::Result res = slDLSSGetOptimalSettings(dlssOptions, optimalSettings);
 
-    DLSSOptimalSettings* outOptimalSettings = new DLSSOptimalSettings();
     outOptimalSettings->optimalRenderWidth = optimalSettings.optimalRenderWidth;
     outOptimalSettings->optimalRenderHeight = optimalSettings.optimalRenderHeight;
     outOptimalSettings->optimalSharpness = (double)optimalSettings.optimalSharpness;
 
-    return outOptimalSettings;
+    return static_cast<int>(res);
 }
 
 typedef sl::FrameToken dlss_frametoken;
@@ -153,7 +152,7 @@ HL_PRIM int HL_NAME(set_tag_for_frame)(sl::FrameToken* frameToken, DLSSResource*
         case DLSSBufferType::ColorOut: type = sl::kBufferTypeScalingOutputColor; break;
         }
 
-        slTags[i] = { &slResources[i], type, sl::ResourceLifecycle::eValidUntilEvaluate, &slExtents[i] };
+        slTags[i] = { &slResources[i], type, sl::ResourceLifecycle::eValidUntilPresent, &slExtents[i] };
     }
 
     sl::Result result = slSetTagForFrame(*frameToken, sl::ViewportHandle(0), slTags.data(), (uint32_t)count, cmdList);
@@ -250,7 +249,7 @@ DEFINE_PRIM(_I32, init, _BOOL);
 DEFINE_PRIM(_I32, shutdown, _NO_ARG);
 DEFINE_PRIM(_I32, set_device, _DEVICE);
 DEFINE_PRIM(_I32, is_feature_supported, _ADAPTER _I32);
-DEFINE_PRIM(_STRUCT, get_optimal_settings, _STRUCT);
+DEFINE_PRIM(_I32, get_optimal_settings, _STRUCT _STRUCT);
 DEFINE_PRIM(_FRAMETOKEN, get_new_frame_token, _I32);
 DEFINE_PRIM(_I32, set_tag_for_frame, _FRAMETOKEN _ABSTRACT(hl_carray) _I32 _RES);
 DEFINE_PRIM(_I32, set_options, _STRUCT);
