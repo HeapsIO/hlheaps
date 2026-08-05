@@ -7,6 +7,7 @@ typedef DX12Adapter = dx.Dx12.Adapter;
 typedef DLSSRes = dx.Dx12.Resource;
 typedef DLSSResourceState = dx.Dx12.ResourceState;
 typedef DLSSCommandList = dx.Dx12.CommandList;
+typedef DLSSDxRef = dx.Dx12.DxRef;
 
 typedef DLSSFrameToken = hl.Abstract<"dlss_frametoken">;
 
@@ -194,6 +195,10 @@ class Dlss {
 	}
 
 	public static function setDevice(device : DX12Device) : Int {
+		return 0;
+	}
+
+	public static function upgradeInterface(dxInterface : DLSSDxRef) : Int {
 		return 0;
 	}
 

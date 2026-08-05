@@ -72,12 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>include/streamline;$(HASHLINK_SRC)/src;$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>include/streamline/x64;$(HASHLINK_SRC)/$(IntDir);$(WindowsSDK_LibraryPath_x64);$(VC_LibraryPath_x64);</LibraryPath>
+    <LibraryPath>$(HASHLINK_SRC)/$(IntDir);$(WindowsSDK_LibraryPath_x64);$(VC_LibraryPath_x64);</LibraryPath>
     <TargetExt>.hdll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>include/streamline;$(HASHLINK_SRC)/src;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>include/streamline/x64;$(HASHLINK_SRC)/$(IntDir);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <TargetExt>.hdll</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libhl.lib;D3D12.lib;dxgi.lib;dxcompiler.lib;sl.interposer.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libhl.lib;D3D12.lib;dxgi.lib;dxcompiler.lib;</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -143,7 +144,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libhl.lib;D3D12.lib;dxgi.lib;dxcompiler.lib;sl.interposer.lib;</AdditionalDependencies>
+      <AdditionalDependencies>libhl.lib;D3D12.lib;dxgi.lib;dxcompiler.lib;</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
