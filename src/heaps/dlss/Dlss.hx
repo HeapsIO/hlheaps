@@ -3,11 +3,11 @@ package heaps.dlss;
 #if (hldx && dx12 && dlss)
 
 typedef DX12Device = dx.Dx12.Device;
+typedef DX12Factory = dx.Dx12.Factory;
 typedef DX12Adapter = dx.Dx12.Adapter;
 typedef DLSSRes = dx.Dx12.Resource;
 typedef DLSSResourceState = dx.Dx12.ResourceState;
 typedef DLSSCommandList = dx.Dx12.CommandList;
-typedef DLSSDxRef = dx.Dx12.DxRef;
 
 typedef DLSSFrameToken = hl.Abstract<"dlss_frametoken">;
 
@@ -198,8 +198,12 @@ class Dlss {
 		return 0;
 	}
 
-	public static function upgradeInterface(dxInterface : DLSSDxRef) : Int {
-		return 0;
+	public static function upgradeDevice(nativeDevice : DX12Device) : DX12Device {
+		return null;
+	}
+
+	public static function upgradeFactory(nativeFactory : DX12Factory) : DX12Factory {
+		return null;
 	}
 
 	public static function isFeatureSupported(adapter : DX12Adapter, feature : DLSSFeature) : Int {

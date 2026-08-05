@@ -19,7 +19,7 @@
 #endif
 
 #define _DEVICE _ABSTRACT(dx_device)
-#define _DXREF _ABSTRACT(dx_ref)
+#define _FACTORY _ABSTRACT(dx_factory)
 #define _ADAPTER _ABSTRACT(dx_adapter)
 #define _RES _ABSTRACT(dx_resource)
 
@@ -132,12 +132,20 @@ HL_PRIM int HL_NAME(set_device)(void* nativeDevice) {
     return static_cast<int>(res);
 }
 
-HL_PRIM int HL_NAME(upgrade_interface)(void** ref) {
-    IUnknown* base = (IUnknown*)*ref;
-    sl::Result res = slFuncs::slUpgradeInterface(ref);
-    if (res == sl::Result::eOk && *ref != base)
+void* upgradeInterface(void* dx_interface) {
+    IUnknown* base = (IUnknown*)dx_interface;
+    sl::Result res = slFuncs::slUpgradeInterface(&dx_interface);
+    if (res == sl::Result::eOk && dx_interface != base)
         base->Release();
-    return static_cast<int>(res);
+    return dx_interface;
+}
+
+HL_PRIM void* HL_NAME(upgrade_device)(void* nativeDevice) {
+    return upgradeInterface(nativeDevice);
+}
+
+HL_PRIM void* HL_NAME(upgrade_factory)(void* nativeFactory) {
+    return upgradeInterface(nativeFactory);
 }
 
 HL_PRIM int HL_NAME(is_feature_supported)(IDXGIAdapter* adapter, DLSSFeature feature) {
@@ -322,7 +330,8 @@ HL_PRIM int HL_NAME(evaluate_feature)(sl::FrameToken* frameToken, ID3D12Graphics
 
 DEFINE_PRIM(_I32, init, _BOOL);
 DEFINE_PRIM(_I32, shutdown, _NO_ARG);
-DEFINE_PRIM(_I32, upgrade_interface, _DXREF);
+DEFINE_PRIM(_DEVICE, upgrade_device, _DEVICE);
+DEFINE_PRIM(_FACTORY, upgrade_factory, _FACTORY);
 DEFINE_PRIM(_I32, set_device, _DEVICE);
 DEFINE_PRIM(_I32, is_feature_supported, _ADAPTER _I32);
 DEFINE_PRIM(_I32, get_optimal_settings, _STRUCT _STRUCT);
