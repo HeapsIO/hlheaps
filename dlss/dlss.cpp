@@ -8,6 +8,7 @@
 #include <sl_consts.h>
 #include <sl_dlss.h>
 #include <sl_hooks.h>
+#include <sl_pcl.h>
 #include <sl_security.h>
 
 #ifdef HL_WIN_DESKTOP
@@ -43,6 +44,9 @@ SL_FUN_DECL(slGetNewFrameToken);
 SL_FUN_DECL(slSetD3DDevice);
 static PFun_slDLSSGetOptimalSettings* slDLSSGetOptimalSettings{};
 static PFun_slDLSSSetOptions* slDLSSSetOptions{};
+static PFun_slPCLGetState* slPCLGetState{};
+static PFun_slPCLSetMarker* slPCLSetMarker{};
+static PFun_slPCLSetOptions* slPCLSetOptions{};
 }
 
 #define LOAD_SL_FUNC(name) \
@@ -50,7 +54,8 @@ slFuncs::name = reinterpret_cast<PFun_##name*>(GetProcAddress(mod, #name))
 
 enum DLSSFeature {
     DLSS,
-    FrameGen
+    FrameGen,
+    PCL
 };
 
 sl::Feature toSlFeature(DLSSFeature feature) {
@@ -62,6 +67,10 @@ sl::Feature toSlFeature(DLSSFeature feature) {
         }
         case DLSSFeature::FrameGen: {
             featureId = sl::kFeatureDLSS_G;
+            break;
+        }
+        case DLSSFeature::PCL: {
+            featureId = sl::kFeaturePCL;
             break;
         }
     }
@@ -103,7 +112,7 @@ HL_PRIM int HL_NAME(init)(bool showConsole) {
 
     sl::Preferences pref{};
     pref.showConsole = showConsole;
-    pref.logLevel = sl::LogLevel::eOff;
+    pref.logLevel = showConsole ? sl::LogLevel::eVerbose : sl::LogLevel::eOff;
     pref.engine = sl::EngineType::eCustom;
     pref.projectId = "5346cce9-f379-43da-b490-74f1194b1e8f";
     pref.engineVersion = "2.1.1";
@@ -128,6 +137,10 @@ HL_PRIM int HL_NAME(set_device)(void* nativeDevice) {
 
     slFuncs::slGetFeatureFunction(sl::kFeatureDLSS, "slDLSSGetOptimalSettings", (void*&)slFuncs::slDLSSGetOptimalSettings);
     slFuncs::slGetFeatureFunction(sl::kFeatureDLSS, "slDLSSSetOptions", (void*&)slFuncs::slDLSSSetOptions);
+
+    slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLGetState", (void*&)slFuncs::slPCLGetState);
+    slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLSetMarker", (void*&)slFuncs::slPCLSetMarker);
+    slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLSetOptions", (void*&)slFuncs::slPCLSetOptions);
 
     return static_cast<int>(res);
 }
@@ -199,6 +212,58 @@ HL_PRIM sl::FrameToken* HL_NAME(get_new_frame_token)(int frameIndex) {
     uint32_t frameId = (uint32_t)frameIndex;
     slFuncs::slGetNewFrameToken(frameToken, &frameId);
     return frameToken;
+}
+
+static UINT pclStatsWindowMessage = 0;
+
+HL_PRIM int HL_NAME(pcl_init_stats)() {
+    if (slFuncs::slPCLGetState == nullptr)
+        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+
+    sl::PCLState state{};
+    sl::Result res = slFuncs::slPCLGetState(state);
+    if (res == sl::Result::eOk)
+        pclStatsWindowMessage = (UINT)state.statsWindowMessage;
+
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(pcl_set_options)(int virtualKey, int threadId) {
+    if (slFuncs::slPCLSetOptions == nullptr)
+        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+
+    sl::PCLOptions options{};
+    options.virtualKey = (sl::PCLHotKey)virtualKey;
+    options.idThread = (uint32_t)threadId;
+
+    sl::Result res = slFuncs::slPCLSetOptions(options);
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(pcl_set_marker)(sl::FrameToken* frameToken, int marker) {
+    if (slFuncs::slPCLSetMarker == nullptr)
+        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+
+    if (frameToken == nullptr)
+        return static_cast<int>(sl::Result::eErrorInvalidParameter);
+
+    sl::Result res = slFuncs::slPCLSetMarker((sl::PCLMarker)marker, *frameToken);
+    return static_cast<int>(res);
+}
+
+HL_PRIM bool HL_NAME(pcl_poll_ping)(sl::FrameToken* frameToken) {
+    if (pclStatsWindowMessage == 0 || slFuncs::slPCLSetMarker == nullptr || frameToken == nullptr)
+        return false;
+
+    MSG msg;
+    bool pinged = false;
+    while (PeekMessageW(&msg, nullptr, pclStatsWindowMessage, pclStatsWindowMessage, PM_REMOVE))
+        pinged = true;
+
+    if (pinged)
+        slFuncs::slPCLSetMarker(sl::PCLMarker::ePCLatencyPing, *frameToken);
+
+    return pinged;
 }
 
 enum DLSSBufferType {
@@ -336,6 +401,10 @@ DEFINE_PRIM(_I32, set_device, _DEVICE);
 DEFINE_PRIM(_I32, is_feature_supported, _ADAPTER _I32);
 DEFINE_PRIM(_I32, get_optimal_settings, _STRUCT _STRUCT);
 DEFINE_PRIM(_FRAMETOKEN, get_new_frame_token, _I32);
+DEFINE_PRIM(_I32, pcl_init_stats, _NO_ARG);
+DEFINE_PRIM(_I32, pcl_set_options, _I32 _I32);
+DEFINE_PRIM(_I32, pcl_set_marker, _FRAMETOKEN _I32);
+DEFINE_PRIM(_BOOL, pcl_poll_ping, _FRAMETOKEN);
 DEFINE_PRIM(_I32, set_tag_for_frame, _FRAMETOKEN _ABSTRACT(hl_carray) _I32 _RES);
 DEFINE_PRIM(_I32, set_options, _STRUCT);
 DEFINE_PRIM(_I32, set_constants, _FRAMETOKEN _STRUCT);

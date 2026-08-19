@@ -57,6 +57,25 @@ enum abstract SlResult(Int) {
 enum abstract DLSSFeature(Int) {
 	public var DLSS = 0;
 	public var FRAMEGEN = 1;
+	public var PCL = 2;
+}
+
+enum abstract PCLMarker(Int) {
+	public var SIMULATION_START = 0;
+	public var SIMULATION_END = 1;
+	public var RENDER_SUBMIT_START = 2;
+	public var RENDER_SUBMIT_END = 3;
+	public var PRESENT_START = 4;
+	public var PRESENT_END = 5;
+	public var TRIGGER_FLASH = 7;
+	public var PCLATENCY_PING = 8;
+}
+
+enum abstract PCLHotKey(Int) {
+	public var USE_PING_MESSAGE = 0;
+	public var VK_F13 = 0x7C;
+	public var VK_F14 = 0x7D;
+	public var VK_F15 = 0x7E;
 }
 
 enum abstract DLSSPreset(Int) {
@@ -216,6 +235,22 @@ class Dlss {
 
 	public static function getNewFrameToken(frameIndex : Int) : DLSSFrameToken {
 		return null;
+	}
+
+	public static function pclInitStats() : Int {
+		return 0;
+	}
+
+	public static function pclSetOptions(virtualKey : PCLHotKey, threadId : Int) : Int {
+		return 0;
+	}
+
+	public static function pclSetMarker(frameToken : DLSSFrameToken, marker : PCLMarker) : Int {
+		return 0;
+	}
+
+	public static function pclPollPing(frameToken : DLSSFrameToken) : Bool {
+		return false;
 	}
 
 	public static function setTagForFrame(frameToken : DLSSFrameToken, resources : hl.CArray<DLSSResource>, count : Int, commandList : DLSSCommandList) : Int {
