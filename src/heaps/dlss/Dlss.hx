@@ -58,6 +58,7 @@ enum abstract DLSSFeature(Int) {
 	public var DLSS = 0;
 	public var FRAMEGEN = 1;
 	public var PCL = 2;
+	public var REFLEX = 3;
 }
 
 enum abstract PCLMarker(Int) {
@@ -69,6 +70,8 @@ enum abstract PCLMarker(Int) {
 	public var PRESENT_END = 5;
 	public var TRIGGER_FLASH = 7;
 	public var PCLATENCY_PING = 8;
+	public var CONTROLLER_INPUT_SAMPLE = 13;
+	public var DELTA_T_CALCULATION = 14;
 }
 
 enum abstract PCLHotKey(Int) {
@@ -76,6 +79,44 @@ enum abstract PCLHotKey(Int) {
 	public var VK_F13 = 0x7C;
 	public var VK_F14 = 0x7D;
 	public var VK_F15 = 0x7E;
+}
+
+enum abstract ReflexModeNative(Int) {
+	public var OFF = 0;
+	public var LOW_LATENCY = 1;
+	public var LOW_LATENCY_WITH_BOOST = 2;
+}
+
+@:struct class ReflexStateInfo {
+	public var lowLatencyAvailable : Int;
+	public var latencyReportAvailable : Int;
+	public var flashIndicatorDriverControlled : Int;
+	public var statsWindowMessage : Int;
+	public function new() {
+	}
+}
+
+@:struct class ReflexFrameReport {
+	public var frameID : Float;
+	public var inputSampleTime : Float;
+	public var simStartTime : Float;
+	public var simEndTime : Float;
+	public var renderSubmitStartTime : Float;
+	public var renderSubmitEndTime : Float;
+	public var presentStartTime : Float;
+	public var presentEndTime : Float;
+	public var driverStartTime : Float;
+	public var driverEndTime : Float;
+	public var osRenderQueueStartTime : Float;
+	public var osRenderQueueEndTime : Float;
+	public var gpuRenderStartTime : Float;
+	public var gpuRenderEndTime : Float;
+	public var cameraConstructedTime : Float;
+	public var gpuActiveRenderTimeUs : Int;
+	public var gpuFrameTimeUs : Int;
+	public var crossAdapterCopyTimeUs : Int;
+	public function new() {
+	}
 }
 
 enum abstract DLSSPreset(Int) {
@@ -205,6 +246,8 @@ enum abstract DLSSBufferType(Int) {
 
 @:hlNative("dlss")
 class Dlss {
+	public static inline var REFLEX_FRAME_REPORT_COUNT = 64;
+
 	public static function init(showConsole : Bool) : Int {
 		return 0;
 	}
@@ -241,16 +284,28 @@ class Dlss {
 		return 0;
 	}
 
-	public static function pclSetOptions(virtualKey : PCLHotKey, threadId : Int) : Int {
-		return 0;
-	}
-
 	public static function pclSetMarker(frameToken : DLSSFrameToken, marker : PCLMarker) : Int {
 		return 0;
 	}
 
 	public static function pclPollPing(frameToken : DLSSFrameToken) : Bool {
 		return false;
+	}
+
+	public static function reflexSetOptions(mode : ReflexModeNative, frameLimitUs : Int, useMarkersToOptimize : Bool, virtualKey : PCLHotKey, threadId : Int) : Int {
+		return 0;
+	}
+
+	public static function reflexSleep(frameToken : DLSSFrameToken) : Int {
+		return 0;
+	}
+
+	public static function reflexGetState(outState : ReflexStateInfo) : Int {
+		return 0;
+	}
+
+	public static function reflexGetFrameReport(index : Int, outReport : ReflexFrameReport) : Int {
+		return 0;
 	}
 
 	public static function setTagForFrame(frameToken : DLSSFrameToken, resources : hl.CArray<DLSSResource>, count : Int, commandList : DLSSCommandList) : Int {

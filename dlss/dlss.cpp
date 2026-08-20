@@ -9,6 +9,7 @@
 #include <sl_dlss.h>
 #include <sl_hooks.h>
 #include <sl_pcl.h>
+#include <sl_reflex.h>
 #include <sl_security.h>
 
 #ifdef HL_WIN_DESKTOP
@@ -46,7 +47,9 @@ static PFun_slDLSSGetOptimalSettings* slDLSSGetOptimalSettings{};
 static PFun_slDLSSSetOptions* slDLSSSetOptions{};
 static PFun_slPCLGetState* slPCLGetState{};
 static PFun_slPCLSetMarker* slPCLSetMarker{};
-static PFun_slPCLSetOptions* slPCLSetOptions{};
+static PFun_slReflexGetState* slReflexGetState{};
+static PFun_slReflexSetOptions* slReflexSetOptions{};
+static PFun_slReflexSleep* slReflexSleep{};
 }
 
 #define LOAD_SL_FUNC(name) \
@@ -55,7 +58,8 @@ slFuncs::name = reinterpret_cast<PFun_##name*>(GetProcAddress(mod, #name))
 enum DLSSFeature {
     DLSS,
     FrameGen,
-    PCL
+    PCL,
+    Reflex
 };
 
 sl::Feature toSlFeature(DLSSFeature feature) {
@@ -71,6 +75,10 @@ sl::Feature toSlFeature(DLSSFeature feature) {
         }
         case DLSSFeature::PCL: {
             featureId = sl::kFeaturePCL;
+            break;
+        }
+        case DLSSFeature::Reflex: {
+            featureId = sl::kFeatureReflex;
             break;
         }
     }
@@ -91,6 +99,8 @@ HL_PRIM int HL_NAME(init)(bool showConsole) {
         return -1;
 
     HMODULE mod = LoadLibraryW(dllPath.c_str());
+    if (mod == nullptr)
+        return -1;
 
     LOAD_SL_FUNC(slInit);
     LOAD_SL_FUNC(slShutdown);
@@ -116,7 +126,7 @@ HL_PRIM int HL_NAME(init)(bool showConsole) {
     pref.engine = sl::EngineType::eCustom;
     pref.projectId = "5346cce9-f379-43da-b490-74f1194b1e8f";
     pref.engineVersion = "2.1.1";
-    sl::Feature featureList[] = { sl::kFeatureDLSS /*, sl::kFeatureDLSS_G*/ };
+    sl::Feature featureList[] = { sl::kFeatureDLSS, sl::kFeatureReflex /*, sl::kFeatureDLSS_G*/ };
     pref.featuresToLoad = featureList;
     pref.numFeaturesToLoad = _countof(featureList);
     pref.flags |= sl::PreferenceFlags::eUseFrameBasedResourceTagging | sl::PreferenceFlags::eUseManualHooking;
@@ -140,7 +150,10 @@ HL_PRIM int HL_NAME(set_device)(void* nativeDevice) {
 
     slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLGetState", (void*&)slFuncs::slPCLGetState);
     slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLSetMarker", (void*&)slFuncs::slPCLSetMarker);
-    slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLSetOptions", (void*&)slFuncs::slPCLSetOptions);
+
+    slFuncs::slGetFeatureFunction(sl::kFeatureReflex, "slReflexGetState", (void*&)slFuncs::slReflexGetState);
+    slFuncs::slGetFeatureFunction(sl::kFeatureReflex, "slReflexSetOptions", (void*&)slFuncs::slReflexSetOptions);
+    slFuncs::slGetFeatureFunction(sl::kFeatureReflex, "slReflexSleep", (void*&)slFuncs::slReflexSleep);
 
     return static_cast<int>(res);
 }
@@ -228,25 +241,7 @@ HL_PRIM int HL_NAME(pcl_init_stats)() {
     return static_cast<int>(res);
 }
 
-HL_PRIM int HL_NAME(pcl_set_options)(int virtualKey, int threadId) {
-    if (slFuncs::slPCLSetOptions == nullptr)
-        return static_cast<int>(sl::Result::eErrorFeatureMissing);
-
-    sl::PCLOptions options{};
-    options.virtualKey = (sl::PCLHotKey)virtualKey;
-    options.idThread = (uint32_t)threadId;
-
-    sl::Result res = slFuncs::slPCLSetOptions(options);
-    return static_cast<int>(res);
-}
-
 HL_PRIM int HL_NAME(pcl_set_marker)(sl::FrameToken* frameToken, int marker) {
-    if (slFuncs::slPCLSetMarker == nullptr)
-        return static_cast<int>(sl::Result::eErrorFeatureMissing);
-
-    if (frameToken == nullptr)
-        return static_cast<int>(sl::Result::eErrorInvalidParameter);
-
     sl::Result res = slFuncs::slPCLSetMarker((sl::PCLMarker)marker, *frameToken);
     return static_cast<int>(res);
 }
@@ -264,6 +259,98 @@ HL_PRIM bool HL_NAME(pcl_poll_ping)(sl::FrameToken* frameToken) {
         slFuncs::slPCLSetMarker(sl::PCLMarker::ePCLatencyPing, *frameToken);
 
     return pinged;
+}
+
+struct ReflexStateInfo {
+    int lowLatencyAvailable;
+    int latencyReportAvailable;
+    int flashIndicatorDriverControlled;
+    int statsWindowMessage;
+};
+
+struct ReflexFrameReport {
+    double frameID;
+    double inputSampleTime;
+    double simStartTime;
+    double simEndTime;
+    double renderSubmitStartTime;
+    double renderSubmitEndTime;
+    double presentStartTime;
+    double presentEndTime;
+    double driverStartTime;
+    double driverEndTime;
+    double osRenderQueueStartTime;
+    double osRenderQueueEndTime;
+    double gpuRenderStartTime;
+    double gpuRenderEndTime;
+    double cameraConstructedTime;
+    int gpuActiveRenderTimeUs;
+    int gpuFrameTimeUs;
+    int crossAdapterCopyTimeUs;
+};
+
+static sl::ReflexState reflexState{};
+
+HL_PRIM int HL_NAME(reflex_set_options)(int mode, int frameLimitUs, bool useMarkersToOptimize, int virtualKey, int threadId) {
+    sl::ReflexOptions options{};
+    options.mode = (sl::ReflexMode)mode;
+    options.frameLimitUs = (uint32_t)frameLimitUs;
+    options.useMarkersToOptimize = useMarkersToOptimize;
+    options.virtualKey = (uint16_t)virtualKey;
+    options.idThread = (uint32_t)threadId;
+
+    sl::Result res = slFuncs::slReflexSetOptions(options);
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(reflex_sleep)(sl::FrameToken* frameToken) {
+    sl::Result res = slFuncs::slReflexSleep(*frameToken);
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(reflex_get_state)(ReflexStateInfo* outState) {
+    sl::Result res = slFuncs::slReflexGetState(reflexState);
+    if (res != sl::Result::eOk)
+        return static_cast<int>(res);
+
+    outState->lowLatencyAvailable = reflexState.lowLatencyAvailable ? 1 : 0;
+    outState->latencyReportAvailable = reflexState.latencyReportAvailable ? 1 : 0;
+    outState->flashIndicatorDriverControlled = reflexState.flashIndicatorDriverControlled ? 1 : 0;
+    outState->statsWindowMessage = (int)reflexState.statsWindowMessage;
+
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(reflex_get_frame_report)(int index, ReflexFrameReport* outReport) {
+    if (index < 0 || index >= sl::kReflexFrameReportCount)
+        return static_cast<int>(sl::Result::eErrorInvalidParameter);
+
+    if (!reflexState.latencyReportAvailable)
+        return static_cast<int>(sl::Result::eErrorInvalidState);
+
+    const sl::ReflexReport& report = reflexState.frameReport[index];
+    const sl::ReflexReport2& report2 = reflexState.frameReport2[index];
+
+    outReport->frameID = (double)report.frameID;
+    outReport->inputSampleTime = (double)report.inputSampleTime;
+    outReport->simStartTime = (double)report.simStartTime;
+    outReport->simEndTime = (double)report.simEndTime;
+    outReport->renderSubmitStartTime = (double)report.renderSubmitStartTime;
+    outReport->renderSubmitEndTime = (double)report.renderSubmitEndTime;
+    outReport->presentStartTime = (double)report.presentStartTime;
+    outReport->presentEndTime = (double)report.presentEndTime;
+    outReport->driverStartTime = (double)report.driverStartTime;
+    outReport->driverEndTime = (double)report.driverEndTime;
+    outReport->osRenderQueueStartTime = (double)report.osRenderQueueStartTime;
+    outReport->osRenderQueueEndTime = (double)report.osRenderQueueEndTime;
+    outReport->gpuRenderStartTime = (double)report.gpuRenderStartTime;
+    outReport->gpuRenderEndTime = (double)report.gpuRenderEndTime;
+    outReport->cameraConstructedTime = (double)report2.cameraConstructedTime;
+    outReport->gpuActiveRenderTimeUs = (int)report.gpuActiveRenderTimeUs;
+    outReport->gpuFrameTimeUs = (int)report.gpuFrameTimeUs;
+    outReport->crossAdapterCopyTimeUs = (int)report2.crossAdapterCopyTimeUs;
+
+    return static_cast<int>(sl::Result::eOk);
 }
 
 enum DLSSBufferType {
@@ -402,9 +489,12 @@ DEFINE_PRIM(_I32, is_feature_supported, _ADAPTER _I32);
 DEFINE_PRIM(_I32, get_optimal_settings, _STRUCT _STRUCT);
 DEFINE_PRIM(_FRAMETOKEN, get_new_frame_token, _I32);
 DEFINE_PRIM(_I32, pcl_init_stats, _NO_ARG);
-DEFINE_PRIM(_I32, pcl_set_options, _I32 _I32);
 DEFINE_PRIM(_I32, pcl_set_marker, _FRAMETOKEN _I32);
 DEFINE_PRIM(_BOOL, pcl_poll_ping, _FRAMETOKEN);
+DEFINE_PRIM(_I32, reflex_set_options, _I32 _I32 _BOOL _I32 _I32);
+DEFINE_PRIM(_I32, reflex_sleep, _FRAMETOKEN);
+DEFINE_PRIM(_I32, reflex_get_state, _STRUCT);
+DEFINE_PRIM(_I32, reflex_get_frame_report, _I32 _STRUCT);
 DEFINE_PRIM(_I32, set_tag_for_frame, _FRAMETOKEN _ABSTRACT(hl_carray) _I32 _RES);
 DEFINE_PRIM(_I32, set_options, _STRUCT);
 DEFINE_PRIM(_I32, set_constants, _FRAMETOKEN _STRUCT);
