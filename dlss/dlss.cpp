@@ -7,6 +7,7 @@
 #include <sl.h>
 #include <sl_consts.h>
 #include <sl_dlss.h>
+#include <sl_dlss_g.h>
 #include <sl_hooks.h>
 #include <sl_pcl.h>
 #include <sl_reflex.h>
@@ -45,6 +46,8 @@ SL_FUN_DECL(slGetNewFrameToken);
 SL_FUN_DECL(slSetD3DDevice);
 static PFun_slDLSSGetOptimalSettings* slDLSSGetOptimalSettings{};
 static PFun_slDLSSSetOptions* slDLSSSetOptions{};
+static PFun_slDLSSGGetState* slDLSSGGetState{};
+static PFun_slDLSSGSetOptions* slDLSSGSetOptions{};
 static PFun_slPCLGetState* slPCLGetState{};
 static PFun_slPCLSetMarker* slPCLSetMarker{};
 static PFun_slReflexGetState* slReflexGetState{};
@@ -85,7 +88,7 @@ sl::Feature toSlFeature(DLSSFeature feature) {
     return featureId;
 }
 
-HL_PRIM int HL_NAME(init)(bool showConsole) {
+HL_PRIM int HL_NAME(init)(bool showConsole, varray* features, bool checkSignature) {
 
     wchar_t path[2048] = { 0 };
 
@@ -95,7 +98,7 @@ HL_PRIM int HL_NAME(init)(bool showConsole) {
 
     std::filesystem::path basePath = std::filesystem::path(path).parent_path();
     std::filesystem::path dllPath = basePath / L"sl.interposer.dll";
-    if (!sl::security::verifyEmbeddedSignature(dllPath.c_str()))
+    if (checkSignature && !sl::security::verifyEmbeddedSignature(dllPath.c_str()))
         return -1;
 
     HMODULE mod = LoadLibraryW(dllPath.c_str());
@@ -126,9 +129,11 @@ HL_PRIM int HL_NAME(init)(bool showConsole) {
     pref.engine = sl::EngineType::eCustom;
     pref.projectId = "5346cce9-f379-43da-b490-74f1194b1e8f";
     pref.engineVersion = "2.1.1";
-    sl::Feature featureList[] = { sl::kFeatureDLSS, sl::kFeatureReflex /*, sl::kFeatureDLSS_G*/ };
-    pref.featuresToLoad = featureList;
-    pref.numFeaturesToLoad = _countof(featureList);
+    std::vector<sl::Feature> featureList;
+    for (int i = 0; i < features->size; i++)
+        featureList.push_back(toSlFeature((DLSSFeature)hl_aptr(features, int)[i]));
+    pref.featuresToLoad = featureList.data();
+    pref.numFeaturesToLoad = (uint32_t)featureList.size();
     pref.flags |= sl::PreferenceFlags::eUseFrameBasedResourceTagging | sl::PreferenceFlags::eUseManualHooking;
 
     sl::Result res = slFuncs::slInit(pref, sl::kSDKVersion);
@@ -147,6 +152,9 @@ HL_PRIM int HL_NAME(set_device)(void* nativeDevice) {
 
     slFuncs::slGetFeatureFunction(sl::kFeatureDLSS, "slDLSSGetOptimalSettings", (void*&)slFuncs::slDLSSGetOptimalSettings);
     slFuncs::slGetFeatureFunction(sl::kFeatureDLSS, "slDLSSSetOptions", (void*&)slFuncs::slDLSSSetOptions);
+
+    slFuncs::slGetFeatureFunction(sl::kFeatureDLSS_G, "slDLSSGGetState", (void*&)slFuncs::slDLSSGGetState);
+    slFuncs::slGetFeatureFunction(sl::kFeatureDLSS_G, "slDLSSGSetOptions", (void*&)slFuncs::slDLSSGSetOptions);
 
     slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLGetState", (void*&)slFuncs::slPCLGetState);
     slFuncs::slGetFeatureFunction(sl::kFeaturePCL, "slPCLSetMarker", (void*&)slFuncs::slPCLSetMarker);
@@ -190,8 +198,8 @@ struct DLSSOptions {
     uint32_t outputWidth;
     uint32_t outputHeight;
     sl::DLSSPreset preset;
-    int colorBufferHDR;
-    int autoExposure;
+    bool colorBufferHDR;
+    bool autoExposure;
 };
 
 struct DLSSOptimalSettings {
@@ -357,7 +365,11 @@ enum DLSSBufferType {
     Depth,
     MotionVectors,
     ColorIn,
-    ColorOut
+    ColorOut,
+    HUDLessColor,
+    UIColorAndAlpha,
+    UIAlpha,
+    Backbuffer
 };
 
 struct DLSSResource {
@@ -366,6 +378,7 @@ struct DLSSResource {
     int height;
     DLSSBufferType type;
     D3D12_RESOURCE_STATES state;
+    int lifecycle;
 };
 
 HL_PRIM int HL_NAME(set_tag_for_frame)(sl::FrameToken* frameToken, DLSSResource* res, int count, ID3D12GraphicsCommandList* cmdList) {
@@ -385,9 +398,13 @@ HL_PRIM int HL_NAME(set_tag_for_frame)(sl::FrameToken* frameToken, DLSSResource*
         case DLSSBufferType::MotionVectors: type = sl::kBufferTypeMotionVectors; break;
         case DLSSBufferType::ColorIn: type = sl::kBufferTypeScalingInputColor; break;
         case DLSSBufferType::ColorOut: type = sl::kBufferTypeScalingOutputColor; break;
+        case DLSSBufferType::HUDLessColor: type = sl::kBufferTypeHUDLessColor; break;
+        case DLSSBufferType::UIColorAndAlpha: type = sl::kBufferTypeUIColorAndAlpha; break;
+        case DLSSBufferType::UIAlpha: type = sl::kBufferTypeUIAlpha; break;
+        case DLSSBufferType::Backbuffer: type = sl::kBufferTypeBackbuffer; break;
         }
 
-        slTags[i] = { &slResources[i], type, sl::ResourceLifecycle::eValidUntilPresent, &slExtents[i] };
+        slTags[i] = { r.res == nullptr ? nullptr : &slResources[i], type, (sl::ResourceLifecycle)r.lifecycle, &slExtents[i] };
     }
 
     sl::Result result = slFuncs::slSetTagForFrame(*frameToken, sl::ViewportHandle(0), slTags.data(), (uint32_t)count, cmdList);
@@ -430,13 +447,13 @@ struct DLSSConstants {
     float cameraFOV;
     float cameraAspectRatio;
     float motionVectorsInvalidValue;
-    int depthInverted;
-    int cameraMotionIncluded;
-    int motionVectors3D;
-    int reset;
-    int orthographicProjection;
-    int motionVectorsDilated;
-    int motionVectorsJittered;
+    bool depthInverted;
+    bool cameraMotionIncluded;
+    bool motionVectors3D;
+    bool reset;
+    bool orthographicProjection;
+    bool motionVectorsDilated;
+    bool motionVectorsJittered;
     float minRelativeLinearDepthObjectSeparation;
 };
 
@@ -472,6 +489,71 @@ HL_PRIM int HL_NAME(set_constants)(sl::FrameToken* frameToken, DLSSConstants* co
     return static_cast<int>(result);
 }
 
+struct DLSSGOptions {
+    uint32_t mode;
+    uint32_t numFramesToGenerate;
+    uint32_t flags;
+    uint32_t dynamicResWidth;
+    uint32_t dynamicResHeight;
+    float dynamicTargetFrameRate;
+    bool enableUserInterfaceRecomposition;
+};
+
+struct DLSSGStateInfo {
+    int status;
+    int minWidthOrHeight;
+    int numFramesActuallyPresented;
+    int numFramesToGenerateMax;
+    int dynamicMFGSupported;
+    int vsyncSupportAvailable;
+};
+
+HL_PRIM int HL_NAME(dlssg_set_options)(DLSSGOptions* options) {
+    if (slFuncs::slDLSSGSetOptions == nullptr)
+        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+
+    sl::DLSSGOptions dlssgOptions{};
+    dlssgOptions.mode = (sl::DLSSGMode)options->mode;
+    dlssgOptions.numFramesToGenerate = options->numFramesToGenerate;
+    dlssgOptions.flags = (sl::DLSSGFlags)options->flags;
+    dlssgOptions.dynamicResWidth = options->dynamicResWidth;
+    dlssgOptions.dynamicResHeight = options->dynamicResHeight;
+    dlssgOptions.dynamicTargetFrameRate = options->dynamicTargetFrameRate;
+    dlssgOptions.enableUserInterfaceRecomposition = options->enableUserInterfaceRecomposition ? sl::Boolean::eTrue : sl::Boolean::eFalse;
+
+    sl::Result res = slFuncs::slDLSSGSetOptions(sl::ViewportHandle(0), dlssgOptions);
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(dlssg_get_state)(DLSSGStateInfo* outState) {
+    if (slFuncs::slDLSSGGetState == nullptr)
+        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+
+    sl::DLSSGState state{};
+    sl::Result res = slFuncs::slDLSSGGetState(sl::ViewportHandle(0), state, nullptr);
+    if (res != sl::Result::eOk)
+        return static_cast<int>(res);
+
+    outState->status = (int)state.status;
+    outState->minWidthOrHeight = (int)state.minWidthOrHeight;
+    outState->numFramesActuallyPresented = (int)state.numFramesActuallyPresented;
+    outState->numFramesToGenerateMax = (int)state.numFramesToGenerateMax;
+    outState->dynamicMFGSupported = state.bIsDynamicMFGSupported == sl::Boolean::eTrue ? 1 : 0;
+    outState->vsyncSupportAvailable = state.bIsVsyncSupportAvailable == sl::Boolean::eTrue ? 1 : 0;
+
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(set_feature_loaded)(DLSSFeature feature, bool loaded) {
+    sl::Result res = slFuncs::slSetFeatureLoaded(toSlFeature(feature), loaded);
+    return static_cast<int>(res);
+}
+
+HL_PRIM int HL_NAME(free_resources)(DLSSFeature feature) {
+    sl::Result res = slFuncs::slFreeResources(toSlFeature(feature), sl::ViewportHandle(0));
+    return static_cast<int>(res);
+}
+
 HL_PRIM int HL_NAME(evaluate_feature)(sl::FrameToken* frameToken, ID3D12GraphicsCommandList* cmdList, DLSSFeature feature) {
     sl::ViewportHandle vp = { sl::ViewportHandle(0) };
     const sl::BaseStructure* inputs[] = { &vp };
@@ -480,7 +562,7 @@ HL_PRIM int HL_NAME(evaluate_feature)(sl::FrameToken* frameToken, ID3D12Graphics
     return static_cast<int>(result);
 }
 
-DEFINE_PRIM(_I32, init, _BOOL);
+DEFINE_PRIM(_I32, init, _BOOL _ARR _BOOL);
 DEFINE_PRIM(_I32, shutdown, _NO_ARG);
 DEFINE_PRIM(_DEVICE, upgrade_device, _DEVICE);
 DEFINE_PRIM(_FACTORY, upgrade_factory, _FACTORY);
@@ -498,4 +580,8 @@ DEFINE_PRIM(_I32, reflex_get_frame_report, _I32 _STRUCT);
 DEFINE_PRIM(_I32, set_tag_for_frame, _FRAMETOKEN _ABSTRACT(hl_carray) _I32 _RES);
 DEFINE_PRIM(_I32, set_options, _STRUCT);
 DEFINE_PRIM(_I32, set_constants, _FRAMETOKEN _STRUCT);
+DEFINE_PRIM(_I32, dlssg_set_options, _STRUCT);
+DEFINE_PRIM(_I32, dlssg_get_state, _STRUCT);
+DEFINE_PRIM(_I32, set_feature_loaded, _I32 _BOOL);
+DEFINE_PRIM(_I32, free_resources, _I32);
 DEFINE_PRIM(_I32, evaluate_feature, _FRAMETOKEN _RES _I32);

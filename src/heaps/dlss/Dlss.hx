@@ -54,7 +54,7 @@ enum abstract SlResult(Int) {
 	var WarnOutOfVRAM = 39;
 }
 
-enum abstract DLSSFeature(Int) {
+enum abstract DLSSFeature(Int) to Int {
 	public var DLSS = 0;
 	public var FRAMEGEN = 1;
 	public var PCL = 2;
@@ -170,6 +170,16 @@ enum abstract DLSSBufferType(Int) {
 	public var MOTIONVECTORS = 1;
 	public var COLORIN = 2;
 	public var COLOROUT = 3;
+	public var HUDLESSCOLOR = 4;
+	public var UICOLORANDALPHA = 5;
+	public var UIALPHA = 6;
+	public var BACKBUFFER = 7;
+}
+
+enum abstract DLSSResourceLifecycle(Int) {
+	public var ONLY_VALID_NOW = 0;
+	public var VALID_UNTIL_PRESENT = 1;
+	public var VALID_UNTIL_EVALUATE = 2;
 }
 
 @:struct class DLSSResource {
@@ -178,6 +188,54 @@ enum abstract DLSSBufferType(Int) {
 	public var height : Int;
 	public var type : DLSSBufferType;
 	public var state : DLSSResourceState;
+	public var lifecycle : DLSSResourceLifecycle;
+	public function new() {
+	}
+}
+
+enum abstract DLSSGModeNative(Int) {
+	public var OFF = 0;
+	public var ON = 1;
+	public var AUTO = 2;
+	public var DYNAMIC = 3;
+}
+
+enum abstract DLSSGFlag(Int) to Int {
+	public var SHOW_ONLY_INTERPOLATED_FRAME = 1;
+	public var DYNAMIC_RESOLUTION_ENABLED = 2;
+	public var REQUEST_VRAM_ESTIMATE = 4;
+	public var RETAIN_RESOURCES_WHEN_OFF = 8;
+	public var ENABLE_FULLSCREEN_MENU_DETECTION = 16;
+}
+
+enum abstract DLSSGStatus(Int) from Int {
+	public var OK = 0;
+	public var FAIL_RESOLUTION_TOO_LOW = 1;
+	public var FAIL_REFLEX_NOT_DETECTED_AT_RUNTIME = 2;
+	public var FAIL_HDR_FORMAT_NOT_SUPPORTED = 4;
+	public var FAIL_COMMON_CONSTANTS_INVALID = 8;
+	public var FAIL_GET_CURRENT_BACK_BUFFER_INDEX_NOT_CALLED = 16;
+}
+
+@:struct class DLSSGOptions {
+	public var mode : DLSSGModeNative;
+	public var numFramesToGenerate : Int;
+	public var flags : Int;
+	public var dynamicResWidth : Int;
+	public var dynamicResHeight : Int;
+	public var dynamicTargetFrameRate : Single;
+	public var enableUserInterfaceRecomposition : Bool;
+	public function new() {
+	}
+}
+
+@:struct class DLSSGStateInfo {
+	public var status : Int;
+	public var minWidthOrHeight : Int;
+	public var numFramesActuallyPresented : Int;
+	public var numFramesToGenerateMax : Int;
+	public var dynamicMFGSupported : Int;
+	public var vsyncSupportAvailable : Int;
 	public function new() {
 	}
 }
@@ -248,7 +306,7 @@ enum abstract DLSSBufferType(Int) {
 class Dlss {
 	public static inline var REFLEX_FRAME_REPORT_COUNT = 64;
 
-	public static function init(showConsole : Bool) : Int {
+	public static function init(showConsole : Bool, features : hl.NativeArray<Int>, checkSignature : Bool) : Int {
 		return 0;
 	}
 
@@ -317,6 +375,22 @@ class Dlss {
 	}
 
 	public static function setConstants(frameToken : DLSSFrameToken, constants : DLSSConstants) : Int {
+		return 0;
+	}
+
+	public static function dlssgSetOptions(options : DLSSGOptions) : Int {
+		return 0;
+	}
+
+	public static function dlssgGetState(outState : DLSSGStateInfo) : Int {
+		return 0;
+	}
+
+	public static function setFeatureLoaded(feature : DLSSFeature, loaded : Bool) : Int {
+		return 0;
+	}
+
+	public static function freeResources(feature : DLSSFeature) : Int {
 		return 0;
 	}
 
