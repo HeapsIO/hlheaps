@@ -58,6 +58,9 @@ static PFun_slReflexSleep* slReflexSleep{};
 #define LOAD_SL_FUNC(name) \
 slFuncs::name = reinterpret_cast<PFun_##name*>(GetProcAddress(mod, #name))
 
+#define CHECK_SL_FUNC(name) \
+if (slFuncs::name == nullptr) return static_cast<int>(sl::Result::eErrorFeatureMissing)
+
 enum DLSSFeature {
     DLSS,
     FrameGen,
@@ -209,6 +212,8 @@ struct DLSSOptimalSettings {
 };
 
 HL_PRIM int HL_NAME(get_optimal_settings)(DLSSOptions* options, DLSSOptimalSettings* outOptimalSettings) {
+    CHECK_SL_FUNC(slDLSSGetOptimalSettings);
+
     sl::DLSSOptions dlssOptions;
     dlssOptions.mode = options->mode;
     dlssOptions.outputWidth = options->outputWidth;
@@ -238,8 +243,7 @@ HL_PRIM sl::FrameToken* HL_NAME(get_new_frame_token)(int frameIndex) {
 static UINT pclStatsWindowMessage = 0;
 
 HL_PRIM int HL_NAME(pcl_init_stats)() {
-    if (slFuncs::slPCLGetState == nullptr)
-        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+    CHECK_SL_FUNC(slPCLGetState);
 
     sl::PCLState state{};
     sl::Result res = slFuncs::slPCLGetState(state);
@@ -250,6 +254,8 @@ HL_PRIM int HL_NAME(pcl_init_stats)() {
 }
 
 HL_PRIM int HL_NAME(pcl_set_marker)(sl::FrameToken* frameToken, int marker) {
+    CHECK_SL_FUNC(slPCLSetMarker);
+
     sl::Result res = slFuncs::slPCLSetMarker((sl::PCLMarker)marker, *frameToken);
     return static_cast<int>(res);
 }
@@ -300,6 +306,8 @@ struct ReflexFrameReport {
 static sl::ReflexState reflexState{};
 
 HL_PRIM int HL_NAME(reflex_set_options)(int mode, int frameLimitUs, bool useMarkersToOptimize, int virtualKey, int threadId) {
+    CHECK_SL_FUNC(slReflexSetOptions);
+
     sl::ReflexOptions options{};
     options.mode = (sl::ReflexMode)mode;
     options.frameLimitUs = (uint32_t)frameLimitUs;
@@ -312,11 +320,15 @@ HL_PRIM int HL_NAME(reflex_set_options)(int mode, int frameLimitUs, bool useMark
 }
 
 HL_PRIM int HL_NAME(reflex_sleep)(sl::FrameToken* frameToken) {
+    CHECK_SL_FUNC(slReflexSleep);
+
     sl::Result res = slFuncs::slReflexSleep(*frameToken);
     return static_cast<int>(res);
 }
 
 HL_PRIM int HL_NAME(reflex_get_state)(ReflexStateInfo* outState) {
+    CHECK_SL_FUNC(slReflexGetState);
+
     sl::Result res = slFuncs::slReflexGetState(reflexState);
     if (res != sl::Result::eOk)
         return static_cast<int>(res);
@@ -413,11 +425,18 @@ HL_PRIM int HL_NAME(set_tag_for_frame)(sl::FrameToken* frameToken, DLSSResource*
 }
 
 HL_PRIM int HL_NAME(set_options)(DLSSOptions* options) {
+    CHECK_SL_FUNC(slDLSSSetOptions);
+
     sl::DLSSOptions dlssOptions;
     dlssOptions.mode = options->mode;
     dlssOptions.outputWidth = options->outputWidth;
     dlssOptions.outputHeight = options->outputHeight;
     dlssOptions.dlaaPreset = options->preset;
+    dlssOptions.qualityPreset = options->preset;
+    dlssOptions.balancedPreset = options->preset;
+    dlssOptions.performancePreset = options->preset;
+    dlssOptions.ultraPerformancePreset = options->preset;
+    dlssOptions.ultraQualityPreset = options->preset;
     dlssOptions.colorBuffersHDR = options->colorBufferHDR ? sl::Boolean::eTrue : sl::Boolean::eFalse;
     dlssOptions.useAutoExposure = options->autoExposure ? sl::Boolean::eTrue : sl::Boolean::eFalse;
 
@@ -509,8 +528,7 @@ struct DLSSGStateInfo {
 };
 
 HL_PRIM int HL_NAME(dlssg_set_options)(DLSSGOptions* options) {
-    if (slFuncs::slDLSSGSetOptions == nullptr)
-        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+    CHECK_SL_FUNC(slDLSSGSetOptions);
 
     sl::DLSSGOptions dlssgOptions{};
     dlssgOptions.mode = (sl::DLSSGMode)options->mode;
@@ -526,8 +544,7 @@ HL_PRIM int HL_NAME(dlssg_set_options)(DLSSGOptions* options) {
 }
 
 HL_PRIM int HL_NAME(dlssg_get_state)(DLSSGStateInfo* outState) {
-    if (slFuncs::slDLSSGGetState == nullptr)
-        return static_cast<int>(sl::Result::eErrorFeatureMissing);
+    CHECK_SL_FUNC(slDLSSGGetState);
 
     sl::DLSSGState state{};
     sl::Result res = slFuncs::slDLSSGGetState(sl::ViewportHandle(0), state, nullptr);
