@@ -24,6 +24,7 @@
 #define _DEVICE _ABSTRACT(dx_device)
 #define _FACTORY _ABSTRACT(dx_factory)
 #define _ADAPTER _ABSTRACT(dx_adapter)
+#define _SWAPCHAIN _ABSTRACT(dx_swapchain)
 #define _RES _ABSTRACT(dx_resource)
 
 namespace slFuncs {
@@ -143,14 +144,31 @@ HL_PRIM int HL_NAME(init)(bool showConsole, varray* features, bool checkSignatur
     return static_cast<int>(res);
 }
 
+static UINT pclStatsWindowMessage = 0;
+
+static void clearFeatureFuncs() {
+    slFuncs::slDLSSGetOptimalSettings = nullptr;
+    slFuncs::slDLSSSetOptions = nullptr;
+    slFuncs::slDLSSGGetState = nullptr;
+    slFuncs::slDLSSGSetOptions = nullptr;
+    slFuncs::slPCLGetState = nullptr;
+    slFuncs::slPCLSetMarker = nullptr;
+    slFuncs::slReflexGetState = nullptr;
+    slFuncs::slReflexSetOptions = nullptr;
+    slFuncs::slReflexSleep = nullptr;
+    pclStatsWindowMessage = 0;
+}
+
 HL_PRIM int HL_NAME(shutdown)() {
+    clearFeatureFuncs();
     sl::Result res = slFuncs::slShutdown();
     return static_cast<int>(res);
 }
 
 HL_PRIM int HL_NAME(set_device)(void* nativeDevice) {
+    clearFeatureFuncs();
     sl::Result res = slFuncs::slSetD3DDevice(nativeDevice);
-    if (res != sl::Result::eOk) 
+    if (res != sl::Result::eOk)
         return static_cast<int>(res);
 
     slFuncs::slGetFeatureFunction(sl::kFeatureDLSS, "slDLSSGetOptimalSettings", (void*&)slFuncs::slDLSSGetOptimalSettings);
@@ -183,6 +201,33 @@ HL_PRIM void* HL_NAME(upgrade_device)(void* nativeDevice) {
 
 HL_PRIM void* HL_NAME(upgrade_factory)(void* nativeFactory) {
     return upgradeInterface(nativeFactory);
+}
+
+HL_PRIM void* HL_NAME(upgrade_swap_chain)(void* nativeSwapChain) {
+    return upgradeInterface(nativeSwapChain);
+}
+
+void* getNativeInterface(void* proxyInterface) {
+    if (proxyInterface == nullptr || slFuncs::slGetNativeInterface == nullptr)
+        return proxyInterface;
+
+    void* nativeInterface = nullptr;
+    sl::Result res = slFuncs::slGetNativeInterface(proxyInterface, &nativeInterface);
+    if (res != sl::Result::eOk || nativeInterface == nullptr)
+        return proxyInterface;
+    return nativeInterface;
+}
+
+HL_PRIM void* HL_NAME(get_native_device)(void* device) {
+    return getNativeInterface(device);
+}
+
+HL_PRIM void* HL_NAME(get_native_factory)(void* factory) {
+    return getNativeInterface(factory);
+}
+
+HL_PRIM void* HL_NAME(get_native_queue)(void* queue) {
+    return getNativeInterface(queue);
 }
 
 HL_PRIM int HL_NAME(is_feature_supported)(IDXGIAdapter* adapter, DLSSFeature feature) {
@@ -239,8 +284,6 @@ HL_PRIM sl::FrameToken* HL_NAME(get_new_frame_token)(int frameIndex) {
     slFuncs::slGetNewFrameToken(frameToken, &frameId);
     return frameToken;
 }
-
-static UINT pclStatsWindowMessage = 0;
 
 HL_PRIM int HL_NAME(pcl_init_stats)() {
     CHECK_SL_FUNC(slPCLGetState);
@@ -585,6 +628,10 @@ DEFINE_PRIM(_I32, init, _BOOL _ARR _BOOL);
 DEFINE_PRIM(_I32, shutdown, _NO_ARG);
 DEFINE_PRIM(_DEVICE, upgrade_device, _DEVICE);
 DEFINE_PRIM(_FACTORY, upgrade_factory, _FACTORY);
+DEFINE_PRIM(_SWAPCHAIN, upgrade_swap_chain, _SWAPCHAIN);
+DEFINE_PRIM(_DEVICE, get_native_device, _DEVICE);
+DEFINE_PRIM(_FACTORY, get_native_factory, _FACTORY);
+DEFINE_PRIM(_RES, get_native_queue, _RES);
 DEFINE_PRIM(_I32, set_device, _DEVICE);
 DEFINE_PRIM(_I32, is_feature_supported, _ADAPTER _I32);
 DEFINE_PRIM(_I32, get_optimal_settings, _STRUCT _STRUCT);

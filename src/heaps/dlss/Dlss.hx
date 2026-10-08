@@ -5,6 +5,7 @@ package heaps.dlss;
 typedef DX12Device = dx.Dx12.Device;
 typedef DX12Factory = dx.Dx12.Factory;
 typedef DX12Adapter = dx.Dx12.Adapter;
+typedef DX12SwapChain = hl.Abstract<"dx_swapchain">;
 typedef DLSSRes = dx.Dx12.Resource;
 typedef DLSSResourceState = dx.Dx12.ResourceState;
 typedef DLSSCommandList = dx.Dx12.CommandList;
@@ -323,6 +324,22 @@ class Dlss {
 	}
 
 	public static function upgradeFactory(nativeFactory : DX12Factory) : DX12Factory {
+		return null;
+	}
+
+	public static function upgradeSwapChain(nativeSwapChain : DX12SwapChain) : DX12SwapChain {
+		return null;
+	}
+
+	public static function getNativeDevice(device : DX12Device) : DX12Device {
+		return null;
+	}
+
+	public static function getNativeFactory(factory : DX12Factory) : DX12Factory {
+		return null;
+	}
+
+	public static function getNativeQueue(queue : dx.Dx12.CommandQueue) : dx.Dx12.CommandQueue {
 		return null;
 	}
 
